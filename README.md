@@ -1,2 +1,5 @@
 # Arise Anime
-Arise Anime | Your ultimate destination for streaming anime! Witness new worlds and epic stories unfold.
+
+A modern streaming platform built with Next.js.
+
+To get started, take a look at src/app/page.tsx.
