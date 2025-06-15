@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 12, "column": 0}, "map": {"version":3,"sources":["file:///Users/manish/Documents/GSMA%20Website/Trae_Git_Arise_Anime_Work/Arise_Anime/src/app/favicon.ico.mjs%20%28structured%20image%20object%29"],"sourcesContent":["import src from \"IMAGE\";\nexport default { src, width: 1842, height: 2090 }\n"],"names":[],"mappings":";;;AAAA;;uCACe;IAAE,KAAA,8GAAA,CAAA,UAAG;IAAE,OAAO;IAAM,QAAQ;AAAK","debugId":null}}]
+}

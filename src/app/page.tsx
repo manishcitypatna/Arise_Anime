@@ -158,7 +158,7 @@ export default function Home() {
   );
 }
 
-TopCharactersSection.CharacterCardRenderer = ({ item }: { item: CharacterItem }) => {
+const CharacterCardRenderer = ({ item }: { item: CharacterItem }) => {
   const CharacterCircleCard = require('@/components/shared/character-circle-card').default;
   return <CharacterCircleCard character={item} />;
 };

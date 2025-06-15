@@ -1,0 +1,7 @@
+{
+  "/anime-list/page": "app/anime-list/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/movies/page": "app/movies/page.js",
+  "/page": "app/page.js",
+  "/player/page": "app/player/page.js"
+}

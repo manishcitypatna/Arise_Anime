@@ -99,8 +99,8 @@ const MainFooter: React.FC = () => {
         <div className="pt-8 border-t border-border text-sm text-muted-foreground">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <div className="text-center sm:text-left mb-4 sm:mb-0">
-              <p>&copy; {new Date().getFullYear()} StreamVerse. All rights reserved.</p>
-              <p className="mt-1 text-xs">Disclaimer: This site StreamVerse does not store any files on its server. All contents are provided by non-affiliated third parties.</p>
+              <p>&copy; {new Date().getFullYear()} Arise Anime | All rights reserved.</p>
+              <p className="mt-1 text-xs">Disclaimer: This site Arise Anime does not store any files on its server. All contents are provided by non-affiliated third parties.</p>
             </div>
             <div className="flex space-x-4 mt-2 sm:mt-0">
               <Link href="/legal/privacy" className="hover:text-primary">Privacy Policy</Link>
