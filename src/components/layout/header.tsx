@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import Logo from '@/components/common/logo';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const NavLinks = ({ inSheet = false }: { inSheet?: boolean }) => {
   const pathname = usePathname();
@@ -41,7 +42,17 @@ const NavLinks = ({ inSheet = false }: { inSheet?: boolean }) => {
 
 const Header: React.FC = () => {
   const [mounted, setMounted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+
   useEffect(() => setMounted(true), []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   if (!mounted) {
     return (
@@ -61,32 +72,36 @@ const Header: React.FC = () => {
 
         {/* Mobile & Tablet Search Bar (center) */}
         <div className="flex-grow mx-2 block md:hidden">
-          <div className="relative">
+          <form onSubmit={handleSearch} className="relative">
             <Input
               type="search"
               placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="h-9 pl-8 pr-3 w-full text-sm rounded-md bg-background/70 border-border focus:bg-background"
             />
             <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          </div>
+          </form>
         </div>
 
         {/* Desktop Navigation and Spacer */}
-        <nav className="hidden md:flex items-center space-x-1 ml-auto mr-2"> {/* Adjusted for right alignment after search */}
-            <NavLinks />
+        <nav className="hidden md:flex items-center space-x-1 ml-auto mr-2">
+          <NavLinks />
         </nav>
         
         {/* Right items container */}
         <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
           {/* Desktop Search */}
-          <div className="relative hidden md:block">
+          <form onSubmit={handleSearch} className="relative hidden md:block">
             <Input
               type="search"
               placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="h-9 pl-8 pr-3 w-40 lg:w-56 text-sm rounded-md"
             />
             <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          </div>
+          </form>
           
           <Button variant="ghost" size="icon" className="hidden md:inline-flex">
             <User className="h-5 w-5" />

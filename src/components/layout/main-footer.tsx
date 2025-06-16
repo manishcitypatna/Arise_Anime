@@ -33,15 +33,16 @@ const MainFooter: React.FC = () => {
     { href: '/genre/horror', label: 'Horror' }, { href: '/genre/romance', label: 'Romance' },
   ];
   const navigationLinks = [
-    { href: '/', label: 'Home' }, { href: '/movies', label: 'Movies' },
+    { href: '/', label: 'Home' }, 
+    { href: '/movies', label: 'Movies' },
     { href: '/tv-shows', label: 'TV Shows' },
-  ];
-  const helpLinks = [
-    { href: '/help/faq', label: 'FAQ' }, { href: '/help/contact', label: 'Contact Us' },
-    { href: '/help/support', label: 'Support Center' }, { href: '/player', label: 'Player Page' },
+    { href: '/search', label: 'Search' },
+    { href: '/player', label: 'Player Page' },
   ];
   const companyLinks = [
     { href: '/about', label: 'About Us' },
+    { href: '/help/faq', label: 'FAQ' },
+    { href: '/legal/privacy', label: 'Privacy Policy' },
   ];
 
   return (
@@ -64,10 +65,9 @@ const MainFooter: React.FC = () => {
         </div>
 
         {/* Middle Section: Link Groups */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 mb-8">
           <FooterLinkGroup title="Genres" links={genresLinks} />
           <FooterLinkGroup title="Navigation" links={navigationLinks} />
-          <FooterLinkGroup title="Help" links={helpLinks} />
           <FooterLinkGroup title="Company" links={companyLinks} />
           {/* Container for "Get the App" and "Follow Us" */}
           <div className="col-span-2 flex flex-row items-start gap-x-6 sm:flex-col sm:gap-y-6 sm:col-span-1 lg:col-span-1">

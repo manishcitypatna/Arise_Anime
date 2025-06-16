@@ -1,351 +1,339 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import Header from "@/components/layout/header";
-import MainFooter from "@/components/layout/main-footer";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Progress } from "@/components/ui/progress";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import Link from 'next/link';
-import { Card } from '@/components/ui/card';
-import { Play, Share2, ThumbsUp, BookmarkPlus, Flag } from 'lucide-react';
+// Keep type import if used elsewhere, or remove if not. For now, it's not used.
+import { useState, useEffect, useRef } from 'react';
+import Header from '@/components/layout/header';
+import MainFooter from '@/components/layout/main-footer';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import AdBannerSection from '@/components/sections/ad-banner-section';
+import { adBannerAnimeListData } from '@/data/mock-data';
 
-// Video sources with different qualities
-const VIDEO_SOURCES = {
-  high: {
-    label: "1080p",
-    url: "https://videos.pexels.com/video-files/4124024/4124024-sd_960_506_25fps.mp4"
+const ALPHABET = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+const MOCK_ANIME = [
+  {
+    title: "Attack on Titan",
+    poster: "https://cdn.myanimelist.net/images/anime/1000/110531.jpg",
+    genres: ['Action', 'Dark Fantasy'],
+    letter: 'A',
   },
-  medium: {
-    label: "720p",
-    url: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4"
+  {
+    title: "Death Note",
+    poster: "https://cdn.myanimelist.net/images/anime/9/9453.jpg",
+    genres: ['Psychological', 'Thriller'],
+    letter: 'D',
   },
-  low: {
-    label: "480p",
-    url: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/480/Big_Buck_Bunny_480_10s_1MB.mp4"
+  {
+    title: "Fullmetal Alchemist: Brotherhood",
+    poster: "https://cdn.myanimelist.net/images/anime/1223/96541.jpg",
+    genres: ['Action', 'Adventure'],
+    letter: 'F',
+  },
+  {
+    title: "Hunter x Hunter",
+    poster: "https://cdn.myanimelist.net/images/anime/1337/99013.jpg",
+    genres: ['Action', 'Adventure'],
+    letter: 'H',
+  },
+  {
+    title: "Jujutsu Kaisen",
+    poster: "https://cdn.myanimelist.net/images/anime/1171/109222.jpg",
+    genres: ['Action', 'Supernatural'],
+    letter: 'J',
+  },
+  {
+    title: "Kimetsu no Yaiba",
+    poster: "https://cdn.myanimelist.net/images/anime/1500/103005.jpg",
+    genres: ['Action', 'Fantasy'],
+    letter: 'K',
+  },
+  {
+    title: "My Hero Academia",
+    poster: "https://cdn.myanimelist.net/images/anime/10/78745.jpg",
+    genres: ['Action', 'Superhero'],
+    letter: 'M',
+  },
+  {
+    title: "Naruto",
+    poster: "https://cdn.myanimelist.net/images/anime/13/17405.jpg",
+    genres: ['Action', 'Adventure'],
+    letter: 'N',
+  },
+  {
+    title: "One Piece",
+    poster: "https://cdn.myanimelist.net/images/anime/6/73245.jpg",
+    genres: ['Action', 'Adventure'],
+    letter: 'O',
+  },
+  {
+    title: "Steins;Gate",
+    poster: "https://cdn.myanimelist.net/images/anime/1935/127974.jpg",
+    genres: ['Sci-Fi', 'Thriller'],
+    letter: 'S',
+  },
+  {
+    title: "Tokyo Ghoul",
+    poster: "https://cdn.myanimelist.net/images/anime/5/64449.jpg",
+    genres: ['Action', 'Horror'],
+    letter: 'T',
+  },
+  {
+    title: "Violet Evergarden",
+    poster: "https://cdn.myanimelist.net/images/anime/1795/95088.jpg",
+    genres: ['Drama', 'Slice of Life'],
+    letter: 'V',
+  },
+  {
+    title: "Your Name",
+    poster: "https://cdn.myanimelist.net/images/anime/5/87048.jpg",
+    genres: ['Drama', 'Romance'],
+    letter: 'Y',
+  },
+  {
+    title: "Black Clover",
+    poster: "https://cdn.myanimelist.net/images/anime/2/88336.jpg",
+    genres: ['Action', 'Fantasy'],
+    letter: 'B',
+  },
+  {
+    title: "Chainsaw Man",
+    poster: "https://cdn.myanimelist.net/images/anime/1806/126216.jpg",
+    genres: ['Action', 'Horror'],
+    letter: 'C',
+  },
+  {
+    title: "Eighty-Six",
+    poster: "https://cdn.myanimelist.net/images/anime/1813/113269.jpg",
+    genres: ['Action', 'Drama'],
+    letter: 'E',
+  },
+  {
+    title: "Gintama",
+    poster: "https://cdn.myanimelist.net/images/anime/10/73274.jpg",
+    genres: ['Action', 'Comedy'],
+    letter: 'G',
+  },
+  {
+    title: "Inuyasha",
+    poster: "https://cdn.myanimelist.net/images/anime/3/20797.jpg",
+    genres: ['Action', 'Adventure'],
+    letter: 'I',
+  },
+  {
+    title: "Love is War",
+    poster: "https://cdn.myanimelist.net/images/anime/4/19644.jpg",
+    genres: ['Comedy', 'Romance'],
+    letter: 'L',
+  },
+  {
+    title: "Parasyte",
+    poster: "https://cdn.myanimelist.net/images/anime/3/73178.jpg",
+    genres: ['Action', 'Horror'],
+    letter: 'P',
+  },
+  {
+    title: "Re:Zero",
+    poster: "https://cdn.myanimelist.net/images/anime/11/79410.jpg",
+    genres: ['Drama', 'Fantasy'],
+    letter: 'R',
+  },
+  {
+    title: "Sword Art Online",
+    poster: "https://cdn.myanimelist.net/images/anime/11/39717.jpg",
+    genres: ['Action', 'Adventure'],
+    letter: 'S',
+  },
+  {
+    title: "The Promised Neverland",
+    poster: "https://cdn.myanimelist.net/images/anime/1122/96435.jpg",
+    genres: ['Horror', 'Mystery'],
+    letter: 'T',
+  },
+  {
+    title: "Uzumaki",
+    poster: "https://shikimori.one/system/animes/original/40748.jpg",
+    genres: ['Horror', 'Psychological'],
+    letter: 'U',
+  },
+  {
+    title: "Weathering With You",
+    poster: "https://cdn.myanimelist.net/images/anime/1704/102576.jpg",
+    genres: ['Drama', 'Fantasy'],
+    letter: 'W',
+  },
+  {
+    title: "XxxHolic",
+    poster: "https://cdn.myanimelist.net/images/anime/2/75210.jpg",
+    genres: ['Mystery', 'Supernatural'],
+    letter: 'X',
+  },
+  {
+    title: "Zombie Land Saga",
+    poster: "https://cdn.myanimelist.net/images/anime/1286/93627.jpg",
+    genres: ['Comedy', 'Supernatural'],
+    letter: 'Z',
   }
-};
-
-const PLAYBACK_SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
-
-// Add these interfaces after the existing constants
-interface ContentDetails {
-  id: string;
-  title: string;
-  description: string;
-  releaseYear: string;
-  duration: string;
-  rating: string;
-  genres: string[];
-  cast: string[];
-  director: string;
-  posterUrl: string;
-  bannerUrl: string;
-  downloadOptions: {
-    quality: string;
-    size: string;
-    url: string;
-  }[];
-}
-
-// Add mock content details (replace with your actual data)
-const CONTENT_DETAILS: ContentDetails = {
-  id: "movie-1",
-  title: "Cyber City Chronicles",
-  description: "In a neon-lit metropolis of the future, a renegade detective uncovers a conspiracy that could shatter the city's fragile peace.",
-  releaseYear: "2024",
-  duration: "2h 15m",
-  rating: "4.5/5 IMDb",
-  genres: ["Sci-Fi", "Action", "Thriller"],
-  cast: ["John Smith", "Emma Johnson", "Michael Brown"],
-  director: "Sarah Wilson",
-  posterUrl: "https://placehold.co/300x450.png",
-  bannerUrl: "https://placehold.co/1920x400.png",
-  downloadOptions: [
-    { quality: "1080p", size: "2.1 GB", url: "#" },
-    { quality: "720p", size: "1.4 GB", url: "#" },
-    { quality: "480p", size: "800 MB", url: "#" }
-  ]
-};
-
-// Add this interface above MOCK_DETAILS to ensure 'adult' is typed
-interface MockDetailsType {
-  id: string;
-  title: string;
-  posterUrl: string;
-  bannerUrl: string;
-  rating: number;
-  ratingOutOf: number;
-  ratingStars: number;
-  totalViews: number;
-  reviews: number;
-  releaseYear: number;
-  duration: number;
-  ageRating: string;
-  genres: string[];
-  description: string;
-  format: string;
-  status: string;
-  score: number;
-  startDate: string;
-  endDate: string;
-  totalEpisodes: number;
-  durationPerEpisode: string;
-  country: string;
-  website: string;
-  languages: string[];
-  adult: boolean;
-  cast: string[];
-  crew: string[];
-}
-
-const MOCK_DETAILS: MockDetailsType = {
-  id: 'john-wick-4',
-  title: 'John Wick 4',
-  posterUrl: 'https://placehold.co/320x480.png',
-  bannerUrl: 'https://placehold.co/1920x400.png',
-  rating: 8.2,
-  ratingOutOf: 10,
-  ratingStars: 4,
-  totalViews: 4771,
-  reviews: 21,
-  releaseYear: 2023,
-  duration: 170,
-  ageRating: 'TV-MA',
-  genres: ['Action', 'Crime', 'Thriller'],
-  description: 'Suspendisse eu porta quam, sit amet tristique sem. Maecenas tincidunt finibus ipsum, eget aliquet elit scelerisque non. In aliquet dapibus odio, ut gravida mauris elementum sit amet. Nulla viverra magna eget rutrum ultricies. Vestibulum suscipit neque sed sem dignissim, tincidunt efficitur urna faucibus.',
-  format: 'Movie',
-  status: 'Finished',
-  score: 76,
-  startDate: 'October 5, 2008',
-  endDate: 'April 27, 2011',
-  totalEpisodes: 127,
-  durationPerEpisode: '25 min',
-  country: 'JP',
-  website: 'https://officialsite.com',
-  languages: ['English', 'Japanese'],
-  adult: true,
-  cast: ['Brooke Mulford', 'Aliya Pacheco', 'Ricky Aleman', 'Sarah Neal'],
-  crew: ['Director: Chad Stahelski', 'Writer: Derek Kolstad'],
-};
-
-const RECOMMENDED = [
-  { id: 'warlock', title: 'Warlock of Dusk', year: 'Coming Soon', poster: 'https://placehold.co/200x300.png' },
-  { id: 'white-house', title: 'White House Down', year: '2013', poster: 'https://placehold.co/200x300.png' },
-  { id: 'sleeping-angel', title: 'The Sleeping Angel', year: '2022', poster: 'https://placehold.co/200x300.png' },
-  { id: 'the-post', title: 'The Post', year: '2017', poster: 'https://placehold.co/200x300.png' },
-  { id: 'spiderman', title: 'Spider Man Memo', year: '2018', poster: 'https://placehold.co/200x300.png' },
-  { id: 'man-in-black', title: 'Man in Black', year: '2019', poster: 'https://placehold.co/200x300.png' },
 ];
 
-const TRENDING = [
-  { id: 'trending1', title: 'The Great Empire', year: '2020', poster: 'https://placehold.co/200x300.png', trending: true },
-  { id: 'trending2', title: 'Zombie World', year: '2021', poster: 'https://placehold.co/200x300.png', trending: true },
-  { id: 'trending3', title: 'DJ Tillu', year: '2022', poster: 'https://placehold.co/200x300.png', trending: true },
-  { id: 'trending4', title: 'Love Story', year: '2023', poster: 'https://placehold.co/200x300.png' },
-  { id: 'trending5', title: 'The Reckless', year: '2024', poster: 'https://placehold.co/200x300.png' },
+const breadcrumbSegments = [
+  { label: 'Home', href: '/' },
+  { label: 'Series', href: '/series' },
+  { label: 'Solo Leveling', href: '/series/solo-leveling' },
+  { label: 'Season 1', href: '/series/solo-leveling/season-1' },
+  { label: 'Episode 005', href: '#' },
 ];
 
-// --- STAR RATING COMPONENT ---
-function StarRating({ rating, outOf = 10 }: { rating: number; outOf?: number }) {
-  const stars = Math.round(rating / 2);
-  return (
-    <div className="flex items-center gap-1 font-body text-base text-muted-foreground">
-      {[...Array(5)].map((_, i) => (
-        <span key={i} className={i < stars ? 'text-yellow-400' : 'text-gray-600'}>★</span>
-      ))}
-      <span className="ml-2 text-sm text-muted-foreground">{rating}/{outOf}</span>
-    </div>
-  );
-}
+const episodes = Array.from({ length: 100 }, (_, i) => `Ep ${String(i + 1).padStart(3, '0')}`);
 
-// --- BADGE COMPONENT ---
-function Badge({ children }: { children: React.ReactNode }) {
-  return <span className="px-2 py-1 bg-muted text-muted-foreground rounded-full text-xs font-medium mr-2 mb-2 inline-block font-body">{children}</span>;
-}
+const soloLevelingEpisodes = [
+  { label: 'Episode 12', videoUrl: 'https://s3taku.one/watch?play=16019' },
+  { label: 'Episode 11', videoUrl: 'https://s3taku.one/watch?play=16018' },
+  { label: 'Episode 10', videoUrl: 'https://s3taku.one/watch?play=16017' },
+  { label: 'Episode 9', videoUrl: 'https://s3taku.one/watch?play=16016' },
+  { label: 'Episode 8', videoUrl: 'https://s3taku.one/watch?play=16015' },
+  { label: 'Episode 7', videoUrl: 'https://s3taku.one/watch?play=16014' },
+  { label: 'Episode 6', videoUrl: 'https://s3taku.one/watch?play=16002' },
+  { label: 'Episode 5', videoUrl: 'https://s3taku.one/watch?play=16001' },
+  { label: 'Episode 4', videoUrl: 'https://s3taku.one/watch?play=16000' },
+  { label: 'Episode 3', videoUrl: 'https://s3taku.one/watch?play=15999' },
+  { label: 'Episode 2', videoUrl: 'https://s3taku.one/watch?play=15998' },
+  { label: 'Episode 1', videoUrl: 'https://s3taku.one/watch?play=15969' },
+];
 
-// --- CAROUSEL COMPONENT ---
-type CarouselItem = { id: string; title: string; year: string; poster: string; trending?: boolean };
-function HorizontalCarousel({ items, label, trending = false }: { items: CarouselItem[]; label: string; trending?: boolean }) {
-  return (
-    <div className="mt-10">
-      <div className="flex items-center mb-4">
-        <h2 className="text-lg font-bold flex items-center gap-2">
-          {trending && <span>🔥</span>}{label}
-        </h2>
-      </div>
-      <div className="relative">
-        <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
-          {items.map((item, idx) => (
-            <a
-              key={item.id}
-              href={`/player/${item.id}`}
-              className="group min-w-[160px] max-w-[200px] flex-shrink-0 bg-card rounded-lg overflow-hidden shadow hover:scale-105 transition-transform"
-            >
-              <div className="relative">
-                <img src={item.poster} alt={item.title} className="w-full h-[220px] object-cover" />
-                {trending && idx < 3 && (
-                  <span className="absolute top-2 left-2 bg-yellow-500 text-black text-xs px-2 py-1 rounded-full font-bold">🔥 Trending</span>
-                )}
-              </div>
-              <div className="p-2">
-                <div className="font-semibold text-sm truncate">{item.title}</div>
-                <div className="text-xs text-gray-400">{item.year}</div>
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+// Add video sources
+const videoSources = [
+  { label: 'Source 1', url: 'https://s3taku.one/watch?play=16019' },
+  { label: 'Source 2', url: 'https://example.com/source2' },
+  { label: 'Source 3', url: 'https://example.com/source3' },
+];
 
-// Example data - In real implementation, this would come from props or API
-const mediaInfo = {
-  type: 'Series', // or 'Movie'
-  title: 'Attack on Titan',
-  season: 'Season 1',
-  episode: 'Episode 1',
-  description: 'In a world where humanity resides within enormous walled cities to protect themselves from Titans, giant humanoid creatures who eat humans seemingly without reason. The story follows Eren Yeager, who vows to exterminate the Titans after they bring about the destruction of his hometown and the death of his mother.',
-  rating: '9.0',
-  year: '2013',
-  duration: '24m',
-  genres: ['Action', 'Dark Fantasy', 'Post-Apocalyptic'],
-  quality: '1080p',
-  language: 'Japanese',
-  subtitles: ['English', 'Spanish', 'French'],
+const ANIME_DETAILS = {
+  poster: 'https://images.justwatch.com/poster/322369273/s718/the-leveling-of-solo-leveling.jpg',
+  title: 'Solo Leveling',
+  description: `E-class hunter Jinwoo Sung is the weakest of them all. Looked down on by everyone, he has no money, no abilities to speak of, and no other job prospects. So when his party finds a hidden dungeon, he's determined to use this chance to change his life for the better... but the opportunity he finds is a bit different from what he had in mind!`,
+  altTitle: 'Na Honjaman Level-Up, Ore dake Level Up na Ken',
+  type: 'TV',
+  totalEpisodes: 12,
+  studio: 'A-1 Pictures',
+  year: 2024,
+  source: 'Yen Press',
+  rating: 4.4,
+  tags: [
+    'Action',
+    'Adventure',
+    'Fantasy',
+    'Dungeon',
+    'Game Elements',
+    'Magic',
+    'Monsters',
+    'Swordplay',
+    'Urban Fantasy',
+    'Weak to Strong'
+  ],
 };
 
-// Example related content
-const relatedContent = [
-  {
-    id: 1,
-    title: 'Attack on Titan Season 2',
-    image: 'https://cdn.myanimelist.net/images/anime/12/76049.jpg',
-    episode: 'Episode 1',
-  },
-  {
-    id: 2,
-    title: 'Attack on Titan Season 3',
-    image: 'https://cdn.myanimelist.net/images/anime/1613/102576.jpg',
-    episode: 'Episode 1',
-  },
-  {
-    id: 3,
-    title: 'Attack on Titan: The Final Season',
-    image: 'https://cdn.myanimelist.net/images/anime/1000/110531.jpg',
-    episode: 'Episode 1',
-  },
-];
+const RECOMMENDATIONS_PER_PAGE = 14;
+
+// Add a blank ad banner config for upload
+const blankAdBanner = {
+  id: 'ad-banner-player-page',
+  title: '',
+  description: '',
+  ctaText: '',
+  imageUrl: '/banners/naruto_banner.png',
+  imageHint: '',
+  aspectRatio: '3.4:1.2' as '3.4:1.2',
+  overlayPosition: 'left' as 'left',
+  textAlign: 'text-left' as 'text-left',
+};
 
 export default function PlayerPage() {
-  const [selectedQuality, setSelectedQuality] = useState('1080p');
-  const [selectedSubtitle, setSelectedSubtitle] = useState('English');
-
-  useEffect(() => {
-    document.title = `${mediaInfo.title} - Arise Anime`;
-  }, []);
-
-  // Video state
-  const [currentQuality, setCurrentQuality] = useState<keyof typeof VIDEO_SOURCES>("high");
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  const [animePerPage, setAnimePerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentEpisode, setCurrentEpisode] = useState(soloLevelingEpisodes[0]);
+  const [currentSource, setCurrentSource] = useState(videoSources[0]);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(1);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showControls, setShowControls] = useState(true);
-  const [isBuffering, setIsBuffering] = useState(false);
-
-  // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [recPage, setRecPage] = useState(1);
+  const [recPerPage, setRecPerPage] = useState(RECOMMENDATIONS_PER_PAGE);
+  const totalRecPages = Math.ceil(MOCK_ANIME.length / recPerPage);
+  const paginatedRecommendations = MOCK_ANIME.slice((recPage - 1) * recPerPage, recPage * recPerPage);
+  const [showPlayer, setShowPlayer] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
-  const controlsTimeoutRef = useRef<NodeJS.Timeout>();
-  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handle video events
-  const handleTimeUpdate = () => {
-    if (videoRef.current) {
-      setCurrentTime(videoRef.current.currentTime);
-    }
+  // Filter logic
+  const filteredAnime = selectedLetter
+    ? MOCK_ANIME.filter(anime => anime.letter === selectedLetter)
+    : MOCK_ANIME;
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAnime.length / animePerPage);
+  const paginatedAnime = filteredAnime.slice((currentPage - 1) * animePerPage, currentPage * animePerPage);
+
+  // Handlers
+  const handleLetterClick = (letter: string) => {
+    setSelectedLetter(letter);
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSelectedLetter(null);
+    setCurrentPage(1);
+  };
+  const handleAnimePerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setAnimePerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
-  const handleLoadedMetadata = () => {
-    if (videoRef.current) {
-      setDuration(videoRef.current.duration);
-    }
-  };
-
-  const handleWaiting = () => setIsBuffering(true);
-  const handlePlaying = () => setIsBuffering(false);
-
-  // Control functions
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
-
-  const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
-  };
-
-  const handleVolumeChange = (value: number[]) => {
-    if (videoRef.current) {
-      const newVolume = value[0];
-      videoRef.current.volume = newVolume;
-      setVolume(newVolume);
-      setIsMuted(newVolume === 0);
-    }
-  };
-
-  const handleSeek = (value: number[]) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = value[0];
-      setCurrentTime(value[0]);
-    }
-  };
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      playerRef.current?.requestFullscreen();
-      setIsFullscreen(true);
+  // Play/Pause handler
+  const handlePlayPause = () => {
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
     } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
+      videoRef.current.play();
     }
+    setIsPlaying(!isPlaying);
   };
 
-  const changeQuality = (quality: keyof typeof VIDEO_SOURCES) => {
-    if (videoRef.current) {
-      const currentTime = videoRef.current.currentTime;
-      const wasPlaying = !videoRef.current.paused;
-      
-      setCurrentQuality(quality);
-      videoRef.current.src = VIDEO_SOURCES[quality].url;
-      videoRef.current.currentTime = currentTime;
-      
-      if (wasPlaying) {
-        videoRef.current.play();
-      }
-    }
+  // Seek handlers
+  const handleBackward = () => {
+    if (!videoRef.current) return;
+    videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 10);
   };
+  const handleForward = () => {
+    if (!videoRef.current) return;
+    videoRef.current.currentTime = Math.min(duration, videoRef.current.currentTime + 10);
+  };
+  const handleTimeUpdate = () => {
+    if (!videoRef.current) return;
+    setCurrentTime(videoRef.current.currentTime);
+  };
+  const handleLoadedMetadata = () => {
+    if (!videoRef.current) return;
+    setDuration(videoRef.current.duration);
+  };
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!videoRef.current) return;
+    const percent = parseFloat(e.target.value);
+    const newTime = (percent / 100) * duration;
+    videoRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+  // When episode changes, reset playback
+  useEffect(() => {
+    setCurrentTime(0);
+    setIsPlaying(false);
+    if (videoRef.current) {
+      videoRef.current.load();
+    }
+  }, [currentEpisode]);
 
   // Format time helper
   const formatTime = (time: number) => {
@@ -354,221 +342,260 @@ export default function PlayerPage() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  // Handle controls visibility
-  const handleMouseMove = () => {
-    setShowControls(true);
-    if (controlsTimeoutRef.current) {
-      clearTimeout(controlsTimeoutRef.current);
-    }
-    controlsTimeoutRef.current = setTimeout(() => {
-      if (isPlaying) {
-        setShowControls(false);
-      }
-    }, 3000);
-  };
-
-  // --- Play/Pause on center click ---
-  const handlePlayerClick = () => {
-    if (clickTimeoutRef.current) {
-      clearTimeout(clickTimeoutRef.current);
-      clickTimeoutRef.current = null;
-    }
-    clickTimeoutRef.current = setTimeout(() => {
-      togglePlay();
-    }, 200);
-  };
-
-  // --- Double click left/right for seek ---
-  const handlePlayerDoubleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (!videoRef.current) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    if (x < rect.width / 2) {
-      // Left side: backward 10s
-      videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 10);
-    } else {
-      // Right side: forward 10s
-      videoRef.current.currentTime = Math.min(videoRef.current.duration, videoRef.current.currentTime + 10);
-    }
-    if (clickTimeoutRef.current) {
-      clearTimeout(clickTimeoutRef.current);
-      clickTimeoutRef.current = null;
-    }
-  };
-
   useEffect(() => {
-    return () => {
-      if (controlsTimeoutRef.current) {
-        clearTimeout(controlsTimeoutRef.current);
-      }
-    };
+    document.title = 'Content Library - StreamVerse';
   }, []);
+
+  // Add episode navigation handlers
+  const handlePreviousEpisode = () => {
+    const currentIndex = soloLevelingEpisodes.findIndex(ep => ep.label === currentEpisode.label);
+    if (currentIndex < soloLevelingEpisodes.length - 1) {
+      setCurrentEpisode(soloLevelingEpisodes[currentIndex + 1]);
+    }
+  };
+
+  const handleNextEpisode = () => {
+    const currentIndex = soloLevelingEpisodes.findIndex(ep => ep.label === currentEpisode.label);
+    if (currentIndex > 0) {
+      setCurrentEpisode(soloLevelingEpisodes[currentIndex - 1]);
+    }
+  };
+
+  const handleShowPlayer = () => {
+    setShowPlayer(true);
+    setTimeout(() => {
+      playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0f0f1f] text-white">
       <Header />
       <main className="flex-grow pt-16 pb-10 container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex-1 min-w-0 flex flex-col">
-          <h1 className="text-3xl font-bold font-headline text-foreground mb-2 mt-4">{mediaInfo.title}</h1>
-          <div className="text-sm text-muted-foreground mb-6">
-            <Link href="/" className="hover:text-primary">Home</Link>
-            {' / '}
-            <Link href={`/${mediaInfo.type.toLowerCase()}`} className="hover:text-primary">{mediaInfo.type}</Link>
-            {' / '}
-            <Link href={`/${mediaInfo.type.toLowerCase()}/${mediaInfo.title.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-primary">{mediaInfo.title}</Link>
-            {mediaInfo.type === 'Series' && (
-              <>
-                {' / '}
-                <Link href={`/${mediaInfo.type.toLowerCase()}/${mediaInfo.title.toLowerCase().replace(/\s+/g, '-')}/${mediaInfo.season.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-primary">{mediaInfo.season}</Link>
-                {' / '}
-                <span className="text-primary">{mediaInfo.episode}</span>
-              </>
-            )}
-          </div>
-          
-          {/* Media Player Container */}
-          <div className="w-full aspect-video bg-black rounded-lg mb-6">
-            {/* Placeholder for video player */}
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-              Video Player Will Be Added Here
+        {/* Page Title & Dynamic Breadcrumb - always visible at the top */}
+        <div className="flex flex-col items-start mb-4">
+          <h1 className="text-3xl font-bold font-headline text-foreground mb-2 mt-4">Solo Leveling</h1>
+          <nav className="text-sm text-muted-foreground mb-2 flex flex-wrap gap-1">
+            {breadcrumbSegments.map((seg, idx) => (
+              <span key={seg.label} className="flex items-center">
+                {idx > 0 && <span className="mx-1">/</span>}
+                {seg.href !== '#' ? <a href={seg.href} className="hover:text-primary">{seg.label}</a> : <span>{seg.label}</span>}
+              </span>
+            ))}
+          </nav>
+        </div>
+        {/* Slide-down Media Player Section below title/breadcrumb */}
+        <div
+          ref={playerRef}
+          className={`transition-all duration-700 ease-in-out overflow-hidden ${showPlayer ? 'max-h-[2000px] opacity-100 mt-0' : 'max-h-0 opacity-0 mt-[-32px]'}`}
+        >
+          {/* Main Player Section */}
+          <div className="flex flex-col gap-4">
+            {/* Glass Media Player */}
+            <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-white/10 to-black/30 backdrop-blur-md">
+              {/* Iframe Video Player */}
+              <iframe
+                key={currentEpisode.videoUrl}
+                src={currentEpisode.videoUrl}
+                width="100%"
+                height="100%"
+                className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+                frameBorder="0"
+                allowFullScreen
+                allow="autoplay; fullscreen"
+                title={currentEpisode.label}
+              />
             </div>
-          </div>
-
-          {/* Player Controls */}
-          <div className="flex flex-wrap gap-4 mb-8">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground">
-                  Quality: {selectedQuality}
+            {/* Episode Navigation Controls */}
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-[#18182a]/60 p-4 rounded-xl">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handlePreviousEpisode}
+                  disabled={soloLevelingEpisodes.findIndex(ep => ep.label === currentEpisode.label) === soloLevelingEpisodes.length - 1}
+                  className="bg-muted hover:bg-primary hover:text-primary-foreground"
+                >
+                  Previous Episode
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setSelectedQuality('1080p')}>1080p</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSelectedQuality('720p')}>720p</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSelectedQuality('480p')}>480p</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground">
-                  Subtitles: {selectedSubtitle}
+                <Button
+                  variant="outline"
+                  onClick={handleNextEpisode}
+                  disabled={soloLevelingEpisodes.findIndex(ep => ep.label === currentEpisode.label) === 0}
+                  className="bg-muted hover:bg-primary hover:text-primary-foreground"
+                >
+                  Next Episode
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {mediaInfo.subtitles.map((subtitle) => (
-                  <DropdownMenuItem key={subtitle} onClick={() => setSelectedSubtitle(subtitle)}>
-                    {subtitle}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <div className="flex gap-2 ml-auto">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                      <ThumbsUp className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Like</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                      <BookmarkPlus className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Add to Watchlist</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                      <Share2 className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Share</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                      <Flag className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Report</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          </div>
-
-          {/* Media Info */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            <div className="lg:col-span-2">
-              <h2 className="text-xl font-semibold mb-4">About {mediaInfo.title}</h2>
-              <p className="text-muted-foreground mb-4">{mediaInfo.description}</p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <div>
-                  <span className="text-sm text-muted-foreground">Rating</span>
-                  <p className="font-semibold">{mediaInfo.rating}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Year</span>
-                  <p className="font-semibold">{mediaInfo.year}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Duration</span>
-                  <p className="font-semibold">{mediaInfo.duration}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Quality</span>
-                  <p className="font-semibold">{mediaInfo.quality}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Language</span>
-                  <p className="font-semibold">{mediaInfo.language}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Subtitles</span>
-                  <p className="font-semibold">{mediaInfo.subtitles.join(', ')}</p>
-                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                {/* Episode Select */}
+                <Select value={currentEpisode.label} onValueChange={(value) => {
+                  const episode = soloLevelingEpisodes.find(ep => ep.label === value);
+                  if (episode) setCurrentEpisode(episode);
+                }}>
+                  <SelectTrigger className="w-[180px] bg-muted text-muted-foreground">
+                    <SelectValue placeholder="Select Episode" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {soloLevelingEpisodes.map((episode) => (
+                      <SelectItem key={episode.label} value={episode.label}>
+                        {episode.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {/* Video Source Select */}
+                <Select value={currentSource.label} onValueChange={(value) => {
+                  const source = videoSources.find(s => s.label === value);
+                  if (source) setCurrentSource(source);
+                }}>
+                  <SelectTrigger className="w-[180px] bg-muted text-muted-foreground">
+                    <SelectValue placeholder="Select Source" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {videoSources.map((source) => (
+                      <SelectItem key={source.label} value={source.label}>
+                        {source.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-
-            {/* Related Content */}
+          </div>
+        </div>
+        {/* Anime Details Section (below player, above recommendations) */}
+        <div className="flex flex-col md:flex-row gap-8 mt-10 mb-10 items-start">
+          {/* Poster */}
+          <div className="w-[480px] h-[640px] flex-shrink-0">
+            <img 
+              src={ANIME_DETAILS.poster} 
+              alt="Solo Leveling Poster" 
+              className="w-full h-full object-cover rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.4)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.6)] transition-shadow duration-300"
+            />
+          </div>
+          {/* Details */}
+          <div className="flex-1 min-w-0">
+            <h1 className="text-3xl font-bold mb-4">{ANIME_DETAILS.title}</h1>
+            <p className="mb-6 text-gray-300 leading-relaxed">{ANIME_DETAILS.description}</p>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="space-y-2">
+                <div><span className="text-gray-400">Alt Title:</span> <span className="text-white">{ANIME_DETAILS.altTitle}</span></div>
+                <div><span className="text-gray-400">Type:</span> <span className="text-white">{ANIME_DETAILS.type}</span></div>
+                <div><span className="text-gray-400">Total Episodes:</span> <span className="text-white">{ANIME_DETAILS.totalEpisodes}</span></div>
+                <div><span className="text-gray-400">Studio:</span> <span className="text-white">{ANIME_DETAILS.studio}</span></div>
+              </div>
+              <div className="space-y-2">
+                <div><span className="text-gray-400">Year:</span> <span className="text-white">{ANIME_DETAILS.year}</span></div>
+                <div><span className="text-gray-400">Source:</span> <span className="text-white">{ANIME_DETAILS.source}</span></div>
+                <div><span className="text-gray-400">Rating:</span> <span className="text-yellow-400 font-bold">{ANIME_DETAILS.rating} <span className="inline-block align-middle">★</span></span></div>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-8">
+              {ANIME_DETAILS.tags.map((tag, i) => (
+                <button
+                  key={i}
+                  className="px-4 py-2 rounded-lg bg-[#23233a] text-white hover:bg-primary hover:text-primary-foreground transition-colors duration-300 text-sm font-medium"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+            {/* Play Now & Hide Player Buttons - right aligned, always visible, nav style */}
+            <div className="w-full flex flex-row gap-4 justify-end items-center">
+              <button
+                className={`w-full max-w-[220px] py-4 rounded-2xl text-2xl font-extrabold shadow-lg transition-colors duration-200 border-2 border-yellow-400
+                  ${showPlayer ? 'bg-transparent text-yellow-400 hover:bg-yellow-100/10' : 'bg-yellow-400 text-black hover:bg-yellow-300'}`}
+                onClick={handleShowPlayer}
+                style={{ marginTop: '16px' }}
+                aria-pressed={!showPlayer}
+              >
+                Play Now
+              </button>
+              <button
+                className={`w-full max-w-[220px] py-4 rounded-2xl text-2xl font-extrabold shadow-lg transition-colors duration-200 border-2 border-yellow-400
+                  ${showPlayer ? 'bg-yellow-400 text-black hover:bg-yellow-300' : 'bg-transparent text-yellow-400 hover:bg-yellow-100/10'}`}
+                onClick={() => setShowPlayer(false)}
+                style={{ marginTop: '16px' }}
+                aria-pressed={showPlayer}
+              >
+                Hide Player
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* You May Also Like Section */}
+        <div className="mt-10">
+          <h2 className="text-2xl font-bold mb-4">You May Also Like</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-4 sm:gap-6">
+            {paginatedRecommendations.map((anime, idx) => (
+              <div key={anime.title + idx} className="group/moviecard block w-full shrink-0">
+                <div className="overflow-hidden bg-card border-transparent transition-colors duration-300 ease-in-out flex flex-col h-full rounded-lg">
+                  <div className="relative w-full overflow-hidden aspect-[3/4]">
+                    <img 
+                      src={anime.poster} 
+                      alt={anime.title} 
+                      className="w-full h-full object-cover group-hover/moviecard:scale-120 transition-transform duration-300 ease-in-out"
+                    />
+                  </div>
+                  <div className="p-2 sm:p-3 flex flex-col justify-start overflow-hidden h-[60px] sm:h-[72px]">
+                    <h3 className="font-semibold text-xs sm:text-sm text-foreground group-hover/moviecard:text-primary transition-colors line-clamp-2 mb-0.5">
+                      {anime.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground group-hover/moviecard:text-white transition-colors mt-0.5 line-clamp-1">
+                      {anime.genres.join(' • ')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Full-bleed Ad Banner (no left/right margin/padding) - now above pagination */}
+          <div className="w-screen relative left-[50%] right-[50%] -mx-[50vw] mt-10 mb-2">
+            <AdBannerSection ad={blankAdBanner} />
+          </div>
+          {/* Anime per Page & Pagination (Anime List style) */}
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-8 gap-4">
             <div>
-              <h2 className="text-xl font-semibold mb-4">Related Content</h2>
-              <div className="space-y-4">
-                {relatedContent.map((item) => (
-                  <Card key={item.id} className="overflow-hidden bg-card border-transparent transition-colors duration-300 ease-in-out">
-                    <div className="flex gap-4">
-                      <div className="w-24 h-32 relative">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 p-3">
-                        <h3 className="font-semibold text-sm mb-1">{item.title}</h3>
-                        <p className="text-xs text-muted-foreground">{item.episode}</p>
-                        <Button variant="ghost" size="sm" className="mt-2 text-primary hover:text-primary">
-                          <Play className="h-4 w-4 mr-1" /> Watch Now
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
+              <label htmlFor="recPerPage" className="mr-2 text-sm font-body text-muted-foreground">Anime per Page</label>
+              <select id="recPerPage" value={recPerPage} onChange={e => { setRecPerPage(Number(e.target.value)); setRecPage(1); }} className="bg-muted text-foreground rounded px-2 py-1 font-body text-sm border border-border">
+                <option value={14}>14</option>
+                <option value={28}>28</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <button disabled={recPage === 1} onClick={() => setRecPage(recPage - 1)} className="px-3 py-1 rounded bg-muted text-muted-foreground font-body text-sm disabled:opacity-50">Previous</button>
+              {(() => {
+                const pages = [];
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, recPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalRecPages, startPage + maxVisiblePages - 1);
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                  startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+                if (startPage > 1) {
+                  pages.push(
+                    <button key={1} onClick={() => setRecPage(1)} className="px-3 py-1 rounded font-body text-sm bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground transition">1</button>
+                  );
+                  if (startPage > 2) {
+                    pages.push(<span key="start-ellipsis" className="text-muted-foreground font-body text-sm">...</span>);
+                  }
+                }
+                for (let i = startPage; i <= endPage; i++) {
+                  pages.push(
+                    <button key={i} onClick={() => setRecPage(i)} className={`px-3 py-1 rounded font-body text-sm ${recPage === i ? 'bg-primary text-primary-foreground font-semibold' : 'bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground transition'}`}>{i}</button>
+                  );
+                }
+                if (endPage < totalRecPages) {
+                  if (endPage < totalRecPages - 1) {
+                    pages.push(<span key="end-ellipsis" className="text-muted-foreground font-body text-sm">...</span>);
+                  }
+                  pages.push(
+                    <button key={totalRecPages} onClick={() => setRecPage(totalRecPages)} className="px-3 py-1 rounded font-body text-sm bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground transition">{totalRecPages}</button>
+                  );
+                }
+                return pages;
+              })()}
+              <button disabled={recPage === totalRecPages} onClick={() => setRecPage(recPage + 1)} className="px-3 py-1 rounded bg-muted text-muted-foreground font-body text-sm disabled:opacity-50">Next</button>
             </div>
           </div>
         </div>
@@ -577,3 +604,5 @@ export default function PlayerPage() {
     </div>
   );
 }
+
+

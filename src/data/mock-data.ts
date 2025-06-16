@@ -389,4 +389,17 @@ export const tvSeriesData: MovieItem[] = [
   { id: 'tv-9', title: 'One Piece', year: '1999', duration: 'TV Series', imageUrl: 'https://cdn.myanimelist.net/images/anime/6/73245.jpg', imageHint: 'action, adventure, anime', aspectRatio: '4:3' },
   { id: 'tv-10', title: 'Steins;Gate', year: '2011', duration: 'TV Series', imageUrl: 'https://cdn.myanimelist.net/images/anime/1935/127974.jpg', imageHint: 'sci-fi, thriller, anime', aspectRatio: '4:3' },
 ];
+
+export const adBannerSearchData = {
+  id: "search-banner-1",
+  title: "Discover More Anime",
+  description: "Explore our vast collection of anime titles",
+  imageUrl: "/banners/solo_leveling.jpg",
+  imageHint: "solo leveling anime banner",
+  aspectRatio: "3.4:1.2" as const,
+  link: "/anime-list",
+  buttonText: "Browse All Anime",
+  ctaText: "Explore Now",
+  overlayPosition: "right" as const
+};
     

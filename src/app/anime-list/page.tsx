@@ -277,7 +277,6 @@ export default function AnimeListPage() {
             <select id="animePerPage" value={animePerPage} onChange={handleAnimePerPageChange} className="bg-muted text-foreground rounded px-2 py-1 font-body text-sm border border-border">
               <option value={14}>14</option>
               <option value={28}>28</option>
-              <option value={42}>42</option>
             </select>
           </div>
           <div className="flex items-center gap-2">

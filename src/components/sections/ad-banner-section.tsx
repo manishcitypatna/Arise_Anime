@@ -15,6 +15,9 @@ const AdBannerSection: React.FC<AdBannerSectionProps> = ({ ad }) => {
   // Mobile specific aspect ratio based on ad.aspectRatio prop
   const mobileImageAspectRatioClass = ad.aspectRatio === '3.4:0.7' ? 'aspect-[34/7]' : 'aspect-[17/6]';
 
+  // Use a placeholder if imageUrl is missing
+  const imageUrl = ad.imageUrl || '/banners/After_New_Releases.png';
+
   return (
     <section className="my-8 sm:my-12 text-foreground">
       {/* Mobile Layout */}
@@ -24,7 +27,7 @@ const AdBannerSection: React.FC<AdBannerSectionProps> = ({ ad }) => {
           mobileImageAspectRatioClass
         )}>
           <Image
-            src={ad.imageUrl}
+            src={imageUrl}
             alt={ad.title}
             fill
             className="object-cover"
@@ -40,7 +43,7 @@ const AdBannerSection: React.FC<AdBannerSectionProps> = ({ ad }) => {
         desktopMaxHClass
       )}>
         <Image
-          src={ad.imageUrl}
+          src={imageUrl}
           alt={ad.title}
           fill
           className="object-cover"
