@@ -446,10 +446,15 @@ export const MOCK_ANIME: Anime[] = [
   }
 ];
 
-export const adBannerSearchData = {
+export const adBannerSearchData: AdBannerItem = {
+  id: "search-banner-1",
   title: "Featured Anime",
   description: "Check out our latest and most popular anime series",
-  image: "/banners/search-banner.jpg",
-  link: "/featured"
+  ctaText: "Discover More",
+  imageUrl: "/banners/search-banner.jpg",
+  imageHint: "anime banner with featured series",
+  aspectRatio: "3.4:1.2",
+  overlayPosition: "right",
+  textAlign: "text-right"
 };
     
