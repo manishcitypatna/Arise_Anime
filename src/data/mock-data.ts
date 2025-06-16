@@ -84,7 +84,7 @@ export const heroMoviesData: MovieItem[] = [
   {
     id: 'hero-9',
     title: 'Steins;Gate',
-    year: '2011',
+    year: '応',
     duration: 'TV Series',
     description: 'A group of friends discover time travel and face its consequences.',
     imageUrl: '/hero/steins;gate_poster.png',
@@ -390,16 +390,66 @@ export const tvSeriesData: MovieItem[] = [
   { id: 'tv-10', title: 'Steins;Gate', year: '2011', duration: 'TV Series', imageUrl: 'https://cdn.myanimelist.net/images/anime/1935/127974.jpg', imageHint: 'sci-fi, thriller, anime', aspectRatio: '4:3' },
 ];
 
+export interface Anime {
+  title: string;
+  altTitle?: string;
+  type: string;
+  studio: string;
+  year: string;
+  source: string;
+  rating: number;
+  synopsis?: string;
+  tags?: string[];
+  poster?: string;
+  episodes: number;
+}
+
+export const MOCK_ANIME: Anime[] = [
+  {
+    title: "Solo Leveling Season 2: Arise from the Shadow",
+    altTitle: "Na Honjaman Level-Up Season 2: Arise from the Shadow, Ore dake Level Up na Ken Season 2: Arise from the Shadow",
+    type: "TV",
+    studio: "A-1 Pictures",
+    year: "2025",
+    source: "NA",
+    rating: 4.6,
+    synopsis: "The second season of Solo Leveling.",
+    tags: ["Action", "Adventure", "Fantasy", "Contemporary Fantasy", "Dungeon", "Game Elements", "Magic", "Monsters", "Swordplay", "Urban Fantasy", "Weak to Strong", "Based on a Webtoon"],
+    poster: "https://cdn.myanimelist.net/images/anime/1122/96435.jpg",
+    episodes: 13
+  },
+  {
+    title: "Jujutsu Kaisen",
+    altTitle: "",
+    type: "TV",
+    studio: "MAPPA",
+    year: "2020 - 2021",
+    source: "Viz",
+    rating: 4.5,
+    synopsis: "Although Yuji Itadori looks like your average teenager, his immense physical strength is something to behold! Every sports club wants him to join, but Itadori would rather hang out with the school outcasts in the Occult Research Club. One day, the club manages to get their hands on a sealed cursed object. Little do they know the terror they'll unleash when they break the seal…",
+    tags: ["Action", "Horror", "Shounen", "Body Sharing", "Contemporary Fantasy", "Curse", "Exorcists", "Monsters", "School Life", "Supernatural", "Urban Fantasy", "Based on a Manga"],
+    poster: "/anime-posters/jujutsu-kaisen.jpg",
+    episodes: 24
+  },
+  {
+    title: "Hunter x Hunter (2011)",
+    altTitle: "",
+    type: "TV",
+    studio: "MADHOUSE",
+    year: "2011 - 2014",
+    source: "NA",
+    rating: 4.5,
+    synopsis: "Drawn to the mystique of the unknown, Hunters travel the world in search of terrifying creatures, incredible riches, and unexplored lands. Gon Freecss is a naive-yet-determined young boy who aspires to join the ranks of these individuals, in order to find his missing father Ging - a master of the profession himself. To reach his goal, he partakes in the formidable Hunter Exam, a series of tests that push the participants to their physical and mental limits, with a Hunter License as the prize. During the exam Gon befriends vengeful Kurapika, doctor-to-be Leorio, and skilled assassin Killua, who have entered for their own reasons. But with the sinister Hisoka standing in their way, will Gon and his friends be able to succeed in obtaining their reward, or even escaping with their lives?",
+    tags: ["Action", "Adventure", "Drama", "Fantasy", "Shounen", "Child Protagonists", "Monsters", "Superpowers", "Based on a Manga"],
+    poster: "https://cdn.anime-planet.com/anime/primary/hunter-x-hunter-2011-1-190x285.jpg?t=1625896160",
+    episodes: 148
+  }
+];
+
 export const adBannerSearchData = {
-  id: "search-banner-1",
-  title: "Discover More Anime",
-  description: "Explore our vast collection of anime titles",
-  imageUrl: "/banners/solo_leveling.jpg",
-  imageHint: "solo leveling anime banner",
-  aspectRatio: "3.4:1.2" as const,
-  link: "/anime-list",
-  buttonText: "Browse All Anime",
-  ctaText: "Explore Now",
-  overlayPosition: "right" as const
+  title: "Featured Anime",
+  description: "Check out our latest and most popular anime series",
+  image: "/banners/search-banner.jpg",
+  link: "/featured"
 };
     
